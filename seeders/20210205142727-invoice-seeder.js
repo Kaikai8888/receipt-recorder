@@ -42,7 +42,7 @@ module.exports = {
             for (let i = 0; i < Math.floor(Math.random() * 10) + 1; i++) {
               let number = generateNumber(numbers)
               let sellerNumber = randomNumber(8)
-              const date = faker.date.future(1, tag.createdAt)
+              const date = faker.date.between(tag.createdAt, new Date())
 
               data.push({
                 UserId: user.id,

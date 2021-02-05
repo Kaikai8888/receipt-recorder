@@ -8,13 +8,16 @@ module.exports = {
     try {
       const users = await User.findAll()
       await queryInterface.bulkInsert('Tags', users.reduce((data, user) => {
-        const date = faker.date.future(1, user.createdAt)
-        tags.forEach(tag => data.push({
-          name: tag,
-          UserId: user.id,
-          createdAt: date,
-          updatedAt: date
-        }))
+
+        tags.forEach(tag => {
+          const date = faker.date.between(user.createdAt, new Date())
+          data.push({
+            name: tag,
+            UserId: user.id,
+            createdAt: date,
+            updatedAt: date
+          })
+        })
         return data
       }, []), {})
     } catch (error) {
