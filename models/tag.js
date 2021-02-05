@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   class Tag extends Model {
     static associate(models) {
       Tag.hasMany(models.Invoice)
+      Tag.belongsTo(models.User)
     }
   };
   Tag.init({
