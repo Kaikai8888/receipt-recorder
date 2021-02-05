@@ -6,18 +6,23 @@ const expense = { food: 'dinner', housing: 'rent', transportation: 'bus', entert
 function generateNumber(numbers) {
   //generate unique invoice number
   let number = ''
-  const ACharCode = 'A'.charCodeAt()
-  const ZCharCode = 'Z'.charCodeAt()
+
 
   do {
     for (let i = 0; i < 2; i++) {
-      const charCode = Math.floor(Math.random() * (ZCharCode - ACharCode)) + ACharCode
-      number += String.fromCharCode(charCode)
+      number += randomCharacter()
     }
     number += '-' + randomNumber(8)
   } while (numbers.includes(number))
   numbers.push(number)
   return number
+}
+
+function randomCharacter() {
+  const ACharCode = 'A'.charCodeAt()
+  const ZCharCode = 'Z'.charCodeAt()
+  const charCode = Math.floor(Math.random() * (ZCharCode - ACharCode)) + ACharCode
+  return String.fromCharCode(charCode)
 }
 
 function randomNumber(digits) {
