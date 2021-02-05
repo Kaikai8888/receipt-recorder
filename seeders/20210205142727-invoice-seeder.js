@@ -41,7 +41,7 @@ module.exports = {
           .forEach(tag => {
             for (let i = 0; i < Math.floor(Math.random() * 10) + 1; i++) {
               let number = generateNumber(numbers)
-              let sellerNumber = randomNumber(8)
+              let sellerNumber = Math.floor(Math.random() * (99999999 - 10000000)) + 10000000
               const date = faker.date.between(tag.createdAt, new Date())
 
               data.push({
