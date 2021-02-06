@@ -6,8 +6,6 @@ const expense = { food: 'dinner', housing: 'rent', transportation: 'bus', entert
 function generateNumber(numbers) {
   //generate unique invoice number
   let number = ''
-
-
   do {
     for (let i = 0; i < 2; i++) {
       number += randomCharacter()
