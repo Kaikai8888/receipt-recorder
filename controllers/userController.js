@@ -6,7 +6,6 @@ module.exports = {
   async signIn(req, res, next) {
     try {
       const { email, password } = req.body
-      if (!email || !password || !email.length || !password.length) return res.status(400).json({ status: 'error', message: 'Email or password is missing.' })
       const user = await User.findOne({ where: { email } })
       if (!user) return res.status(400).json({ status: 'error', message: 'The email hasn\'t been registered' })
       if (!bcrypt.compareSync(password, user.password)) return res.status(400).json({ status: 'error', message: 'Wrong email or password.' })
