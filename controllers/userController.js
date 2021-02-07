@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { User } = require('../models')
+const redis = require('../config/redis.js')
 
 module.exports = {
   async signIn(req, res, next) {
@@ -19,5 +20,26 @@ module.exports = {
     } catch (error) {
       next(error)
     }
+  },
+  async signOut(req, res, next) {
+    const token = req.headers.authorization.split(' ')[1]
+    jwt.verify(token, process.env.JWT_SECRET, async (error, payload) => {
+      if (error) return next(error)
+      const { iat, exp } = payload
+      try {
+        await redis.setAsync(token, exp, 'EX', 10)
+        const expData1 = await redis.getAsync(token)
+        console.log('@@1: ', expData1)
+        setTimeout(async () => {
+          const expData2 = await redis.getAsync(token)
+          console.log('@@2: ', expData2)
+        }, 1000 * 12)
+
+      } catch (error) {
+        next(error)
+      }
+      return res.json({ status: 'success', message: 'Successfully sign out' })
+    })
+
   }
 }
