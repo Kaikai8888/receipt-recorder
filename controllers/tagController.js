@@ -1,7 +1,7 @@
 const { Tag } = require('../models')
 
 module.exports = {
-  async getTags(req, res) {
+  async getTags(req, res, next) {
     try {
       const UserId = req.user.id
       const tags = await Tag.findAll({ where: { UserId }, attributes: ['id', 'name'] })
@@ -10,7 +10,7 @@ module.exports = {
       next(error)
     }
   },
-  async getTag(req, res) {
+  async getTag(req, res, next) {
     try {
       const UserId = req.user.id
       const id = Number(req.params.id)
@@ -21,5 +21,15 @@ module.exports = {
     } catch (error) {
       next(error)
     }
-  }
+  },
+  async postTag(req, res, next) {
+    try {
+      const UserId = req.user.id
+      const { name } = req.body
+      await Tag.findOrCreate({ where: { UserId, name } })
+      return res.json({ status: 'success', message: 'ok' })
+    } catch (error) {
+      next(error)
+    }
+  },
 }
