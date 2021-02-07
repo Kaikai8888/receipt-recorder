@@ -27,7 +27,7 @@ module.exports = {
       if (error) return next(error)
       const { iat, exp } = payload
       try {
-        await redis.setAsync(token, exp, 'EX', 10)
+        await redis.setAsync(token, exp, 'EX', exp - iat)
       } catch (error) {
         next(error)
       }
