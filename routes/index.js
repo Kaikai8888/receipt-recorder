@@ -9,7 +9,10 @@ const authenticator = passport.authenticate('jwt', { session: false })
 //all path starts with prefix '/api', which has already been set in app.js file
 router.post('/signin', signinCheck, userController.signIn)
 router.post('/signout', authenticator, userController.signOut)
+
 router.get('/tags', authenticator, tagController.getTags)
+router.get('/tags/:id', authenticator, tagController.getTag)
+
 
 module.exports = router
 
