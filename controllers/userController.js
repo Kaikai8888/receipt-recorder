@@ -28,13 +28,6 @@ module.exports = {
       const { iat, exp } = payload
       try {
         await redis.setAsync(token, exp, 'EX', 10)
-        const expData1 = await redis.getAsync(token)
-        console.log('@@1: ', expData1)
-        setTimeout(async () => {
-          const expData2 = await redis.getAsync(token)
-          console.log('@@2: ', expData2)
-        }, 1000 * 12)
-
       } catch (error) {
         next(error)
       }
