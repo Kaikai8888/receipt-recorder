@@ -1,4 +1,4 @@
-const { body, validationResult } = require('express-validator')
+const { body, param, validationResult } = require('express-validator')
 
 const signinCheck = async (req, res, next) => {
   try {
@@ -19,15 +19,28 @@ const tagCheck = async (req, res, next) => {
   }
 }
 
+const paramsCheck = async (req, res, next) => {
+  try {
+    if (req.params.id) await param('id').custom((id) => parseInt(id)).withMessage('Invalid tag id.').run(req)
+    return validationResultCheck(req, res, next)
+  } catch (error) {
+    next(error)
+  }
+}
+
 function validationResultCheck(req, res, next) {
   const errorResults = validationResult(req)
   if (errorResults.isEmpty()) return next()
-  const errors = errorResults.errors.map(error => error.msg)
-  return res.status(400).json({ status: 'error', message: errors })
+  const errorMsgs = errorResults.errors.map(error => error.msg)
+  return res.status(400).json({
+    status: 'error',
+    message: errorMsgs.length === 1 ? errorMsgs[0] : errorMsgs
+  })
 }
 
 
 module.exports = {
   signinCheck,
-  tagCheck
+  tagCheck,
+  paramsCheck
 }

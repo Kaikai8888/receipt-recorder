@@ -13,8 +13,7 @@ module.exports = {
   async getTag(req, res, next) {
     try {
       const UserId = req.user.id
-      const id = Number(req.params.id)
-      if (!id) return res.status(404).json({ status: 'error', message: 'Invalid tag id' })
+      const { id } = req.params
       const tag = await Tag.findOne({ where: { UserId, id }, attributes: ['id', 'name'] })
       if (!tag) return res.status(404).json({ status: 'error', message: 'Cannot find the tag.' })
       return res.json(tag)
@@ -22,11 +21,24 @@ module.exports = {
       next(error)
     }
   },
-  async postTag(req, res, next) {
+  async createTag(req, res, next) {
     try {
       const UserId = req.user.id
       const { name } = req.body
       await Tag.findOrCreate({ where: { UserId, name } })
+      return res.json({ status: 'success', message: 'ok' })
+    } catch (error) {
+      next(error)
+    }
+  },
+  async editTag(req, res, next) {
+    try {
+      const UserId = req.user.id
+      const { name } = req.body
+      const { id } = req.params
+      const tag = await Tag.findOne({ where: { id, UserId } })
+      if (!tag) return res.status(404).json({ status: 'error', message: 'Cannot find the tag.' })
+      await tag.update({ name })
       return res.json({ status: 'success', message: 'ok' })
     } catch (error) {
       next(error)
