@@ -44,4 +44,16 @@ module.exports = {
       next(error)
     }
   },
+  async deleteTag(req, res, next) {
+    try {
+      const UserId = req.user.id
+      const { id } = req.params
+      const tag = await Tag.findOne({ where: { id, UserId } })
+      if (!tag) return res.status(404).json({ status: 'error', message: 'Cannot find the tag.' })
+      await tag.destroy()
+      return res.json({ status: 'success', message: 'ok' })
+    } catch (error) {
+      next(error)
+    }
+  }
 }

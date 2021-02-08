@@ -14,6 +14,7 @@ router.get('/tags', authenticator, tagController.getTags)
 router.get('/tags/:id', authenticator, paramsCheck, tagController.getTag)
 router.post('/tags', authenticator, tagCheck, tagController.createTag)
 router.put('/tags/:id', authenticator, paramsCheck, tagCheck, tagController.editTag)
+router.delete('/tags/:id', authenticator, paramsCheck, tagController.deleteTag)
 
 module.exports = router
 
