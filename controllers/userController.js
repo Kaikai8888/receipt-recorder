@@ -34,6 +34,5 @@ module.exports = {
       }
       return res.json({ status: 'success', message: 'Successfully sign out' })
     })
-
   }
 }

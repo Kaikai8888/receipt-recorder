@@ -5,4 +5,3 @@ USE invoices_dev;
 
 SELECT * FROM users;
 SELECT * FROM tags;
-SELECT * FROM invoices;
