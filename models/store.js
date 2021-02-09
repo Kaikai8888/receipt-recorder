@@ -5,7 +5,7 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Store extends Model {
     static associate(models) {
-
+      Store.hasMany(models.Receipt)
     }
   };
   Store.init({

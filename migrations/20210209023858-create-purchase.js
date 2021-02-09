@@ -10,11 +10,19 @@ module.exports = {
       },
       ReceiptId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        reference: {
+          model: 'Receipts',
+          key: 'id',
+        }
       },
       ProductId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        reference: {
+          model: 'Products',
+          key: 'id',
+        }
       },
       price: {
         type: Sequelize.DECIMAL,

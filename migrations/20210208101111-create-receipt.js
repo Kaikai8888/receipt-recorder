@@ -10,11 +10,19 @@ module.exports = {
       },
       UserId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        reference: {
+          model: 'Users',
+          key: 'id'
+        }
       },
       StoreId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        reference: {
+          model: 'Stores',
+          key: 'id',
+        }
       },
       payment: {
         type: Sequelize.STRING,

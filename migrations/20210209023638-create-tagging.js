@@ -11,10 +11,18 @@ module.exports = {
       ReceiptId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        reference: {
+          model: 'Receipts',
+          key: 'id',
+        }
       },
       TagId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        reference: {
+          model: 'Tags',
+          key: 'id',
+        }
       },
       createdAt: {
         allowNull: false,
