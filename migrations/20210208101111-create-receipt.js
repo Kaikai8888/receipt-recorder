@@ -1,4 +1,5 @@
 'use strict';
+const paymentTypes = require('../docs/payment_types.json')
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Receipts', {
@@ -27,7 +28,7 @@ module.exports = {
       payment: {
         type: Sequelize.STRING,
         allowNull: false,
-        isIn: [['CASH', 'VISA', 'MASTER']]
+        isIn: [paymentTypes]
       },
       date: {
         type: Sequelize.DATE,
