@@ -5,3 +5,8 @@ USE invoices_dev;
 
 SELECT * FROM users;
 SELECT * FROM tags;
+SELECT * FROM receipts;
+SELECT * FROM products;
+SELECT * FROM stores;
+SELECT * FROM purchases;
+

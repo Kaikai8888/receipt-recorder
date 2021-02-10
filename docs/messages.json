@@ -1,0 +1,10 @@
+{
+  "success": {
+    "general": "ok",
+    "already": "Data has already been saved to database."
+  },
+  "error": {
+    "format": "Unexpected receipt format.",
+    "payment": "Unexpected payment type."
+  }
+}

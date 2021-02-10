@@ -13,10 +13,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Product.init({
+    productNo: DataTypes.BIGINT,
     name: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'Product',
+    modelName: 'Product'
   });
   return Product;
 };

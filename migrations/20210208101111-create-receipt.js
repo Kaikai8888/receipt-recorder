@@ -35,10 +35,10 @@ module.exports = {
         allowNull: false,
       },
       tender: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(10, 2)
       },
       change: {
-        type: Sequelize.DECIMAL
+        type: Sequelize.DECIMAL(10, 2)
       },
       createdAt: {
         allowNull: false,
