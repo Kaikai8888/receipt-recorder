@@ -1,9 +1,10 @@
-const { Receipt, Store, Product, Purchase } = require('../models')
+const { Receipt, Store, Product, Purchase, Tag } = require('../models')
 const fs = require('fs')
 const paymentTypes = require('../docs/payment_types.json')
 const { success: successMsgs } = require('../docs/messages.json')
 const { upsertOnFields } = require('../modules/models.js')
 const { roundTo2Decimal } = require('../modules/utils.js')
+const excludedCols = ['createdAt', 'updatedAt', 'StoreId', 'UserId']
 
 module.exports = {
   createReceipt(req, res, next) {
@@ -97,44 +98,35 @@ module.exports = {
     try {
       const UserId = req.user.id
       const TagId = parseInt(req.query.tagId)
+      const receiptFilter = {
+        include: [
+          { model: Product, as: 'Products' },
+          { model: Store, attributes: ['name', 'id'] },
+        ],
+        attributes: { exclude: excludedCols }
+      }
 
-      let receipts
       if (!TagId) {
         receipts = await Receipt.findAll({
           where: { UserId },
-          include: [
-            { model: Product, as: 'Products' },
-            { model: Store, attributes: ['name', 'id'] }
-          ],
-          attributes: { exclude: ['createdAt', 'updatedAt', 'StoreId', 'UserId'] }
+          ...receiptFilter
         })
+      } else {
+        receipts = await Tag.findOne({
+          where: { id: TagId, UserId },
+          include: {
+            model: Receipt,
+            as: 'TaggedReceipts',
+            ...receiptFilter
+          },
+          attributes: []
+        })
+        receipts = receipts.TaggedReceipts
       }
-      const wrappedReceipts = receipts.map(receipt => {
-        receipt = {
-          ...receipt.dataValues,
-          qty: 0,
-          items: 0,
-          totalAmount: 0
-        }
-        receipt.Products = receipt.Products.map(product => {
-          let { quantity, price } = product.Purchase
-          price = Number(price)
-          const subtotal = quantity * price
-          receipt.qty += quantity
-          receipt.items++
-          receipt.totalAmount += subtotal
-          return {
-            id: product.id,
-            name: product.name,
-            quantity,
-            price,
-            subtotal: roundTo2Decimal(subtotal),
-          }
-        })
-        receipt.totalAmount = roundTo2Decimal(receipt.totalAmount)
-        return receipt
-      })
-      return res.json(wrappedReceipts)
+
+      const formattedReceipts = receipts.map(formatReceipt)
+      return res.json(formattedReceipts)
+
     } catch (error) {
       next(error)
     }
@@ -143,4 +135,34 @@ module.exports = {
 
 function getAfterColon(line) {
   return line.slice(line.indexOf(':') + 1).trim()
+}
+
+function formatReceipt(receipt) {
+  receipt = {
+    ...receipt.dataValues,
+    qty: 0,
+    items: 0,
+    totalAmount: 0
+  }
+
+  if (receipt.Tagging) delete receipt.Tagging
+
+  receipt.Products = receipt.Products.map(product => {
+    let { quantity, price } = product.Purchase
+    price = Number(price)
+    const subtotal = quantity * price
+    receipt.qty += quantity
+    receipt.items++
+    receipt.totalAmount += subtotal
+    return {
+      id: product.id,
+      name: product.name,
+      quantity,
+      price,
+      subtotal: roundTo2Decimal(subtotal),
+    }
+  })
+
+  receipt.totalAmount = roundTo2Decimal(receipt.totalAmount)
+  return receipt
 }
