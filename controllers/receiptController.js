@@ -3,6 +3,7 @@ const fs = require('fs')
 const paymentTypes = require('../docs/payment_types.json')
 const { success: successMsgs } = require('../docs/messages.json')
 const { upsertOnFields } = require('../modules/models.js')
+const { roundTo2Decimal } = require('../modules/utils.js')
 
 module.exports = {
   createReceipt(req, res, next) {
@@ -33,6 +34,7 @@ module.exports = {
         const [date, time] = lines[4].split(/\s+/).map(getAfterColon)
         const [day, month, year] = date.split('.')
         receipt.date = new Date(`${year}-${month}-${day}T${time}`)
+        console.log('@@date', receipt.date.toLocaleString())
         if (receipt.date.toString() === 'Invalid Date') throw new Error('format')
 
         //parse products and purchases data
@@ -95,8 +97,44 @@ module.exports = {
     try {
       const UserId = req.user.id
       const TagId = parseInt(req.query.tagId)
-      //calculate total, subtotal, items, qty
-      const receipts = await Receipt.findAll({ where: { UserId }, include: { model: Product, as: 'Products' } })
+
+      let receipts
+      if (!TagId) {
+        receipts = await Receipt.findAll({
+          where: { UserId },
+          include: [
+            { model: Product, as: 'Products' },
+            { model: Store, attributes: ['name', 'id'] }
+          ],
+          attributes: { exclude: ['createdAt', 'updatedAt', 'StoreId', 'UserId'] }
+        })
+      }
+      const wrappedReceipts = receipts.map(receipt => {
+        receipt = {
+          ...receipt.dataValues,
+          qty: 0,
+          items: 0,
+          totalAmount: 0
+        }
+        receipt.Products = receipt.Products.map(product => {
+          let { quantity, price } = product.Purchase
+          price = Number(price)
+          const subtotal = quantity * price
+          receipt.qty += quantity
+          receipt.items++
+          receipt.totalAmount += subtotal
+          return {
+            id: product.id,
+            name: product.name,
+            quantity,
+            price,
+            subtotal: roundTo2Decimal(subtotal),
+          }
+        })
+        receipt.totalAmount = roundTo2Decimal(receipt.totalAmount)
+        return receipt
+      })
+      return res.json(wrappedReceipts)
     } catch (error) {
       next(error)
     }

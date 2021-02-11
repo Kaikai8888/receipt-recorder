@@ -19,7 +19,9 @@ router.post('/tags', authenticate, tagCheck, tagController.createTag)
 router.put('/tags/:id', authenticate, paramsCheck, tagCheck, tagController.editTag)
 router.delete('/tags/:id', authenticate, paramsCheck, tagController.deleteTag)
 
+router.get('/receipts', authenticate, receiptController.getReceipts)
 router.post('/receipts', authenticate, upload.single('receipt'), receiptController.createReceipt)
+
 
 module.exports = router
 
