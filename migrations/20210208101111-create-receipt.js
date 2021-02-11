@@ -25,6 +25,10 @@ module.exports = {
           key: 'id',
         }
       },
+      receiptNo: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
       payment: {
         type: Sequelize.STRING,
         allowNull: false,

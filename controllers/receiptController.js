@@ -17,9 +17,9 @@ module.exports = {
         const purchases = []
 
         // block duplicate receipt upload
-        receipt.id = parseInt(getAfterColon(lines[5]))
-        if (!receipt.id) throw new Error('format')
-        const duplicateReceipt = await Receipt.findByPk(receipt.id)
+        receipt.receiptNo = parseInt(getAfterColon(lines[5]))
+        if (!receipt.receiptNo) throw new Error('format')
+        const duplicateReceipt = await Receipt.findOne({ where: receipt })
         if (duplicateReceipt) return res.json({ status: 'success', message: successMsgs.already })
 
         //parse store data
@@ -53,7 +53,7 @@ module.exports = {
           const quantity = parseFloat(values[0])
           const price = parseFloat(values[2])
           if (isNaN(quantity) || isNaN(price)) throw new Error('format')
-          purchases.push({ ReceiptId: receipt.id, productNo: product.productNo, quantity, price })
+          purchases.push({ productNo: product.productNo, quantity, price })
           //skip to next product
           i += 2
         }
@@ -71,13 +71,14 @@ module.exports = {
 
         //save to database
         const [{ id: StoreId }, _] = await upsertOnFields(Store, ['gstReg'], store)
-        await Receipt.create({ ...receipt, StoreId })
+        const { id: ReceiptId } = await Receipt.create({ ...receipt, StoreId })
         const results = await Promise.all(products.map(p => upsertOnFields(Product, ['productNo', 'StoreId'], { ...p, StoreId })))
         results.forEach(result => {
           const [product, _] = result
           purchases.some(purchase => {
             if (purchase.productNo !== product.dataValues.productNo) return false
             purchase.ProductId = product.dataValues.id
+            purchase.ReceiptId = ReceiptId
             delete purchase.productNo
             return true
           })
