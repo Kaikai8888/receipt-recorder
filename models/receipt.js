@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         as: 'Products'
       })
       Receipt.belongsTo(models.Store)
+      Receipt.hasMany(models.Tagging)
     }
   };
   Receipt.init({
