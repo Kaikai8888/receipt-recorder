@@ -9,6 +9,7 @@ SELECT * FROM receipts;
 SELECT * FROM products;
 SELECT * FROM stores;
 SELECT * FROM purchases;
+SELECT * FROM taggings;
 
 SELECT r.id, r.receiptNo, r.payment, r.date, r.tender, r.change, 
        r.StoreId, s.name, s.tel, s.gstReg,

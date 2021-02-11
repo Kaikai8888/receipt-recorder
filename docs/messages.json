@@ -4,7 +4,13 @@
     "already": "Data has already been saved to database."
   },
   "error": {
-    "format": "Unexpected receipt format.",
-    "payment": "Unexpected payment type."
+    "400": {
+      "format": "Unexpected receipt format.",
+      "payment": "Unexpected payment type.",
+      "invalidInput": "Invalid input (params, form input....)"
+    },
+    "404": {
+      "notFound": "Resource not found."
+    }
   }
 }

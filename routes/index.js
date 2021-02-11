@@ -6,6 +6,8 @@ const passport = require('../config/passport.js')
 const userController = require('../controllers/userController.js')
 const tagController = require('../controllers/tagController.js')
 const receiptController = require('../controllers/receiptController.js')
+const taggingController = require('../controllers/taggingController.js')
+
 const { signinCheck, tagCheck, paramsCheck } = require('../middlewares/validator.js')
 const authenticate = passport.authenticate('jwt', { session: false })
 
@@ -21,6 +23,9 @@ router.delete('/tags/:id', authenticate, paramsCheck, tagController.deleteTag)
 
 router.get('/receipts', authenticate, receiptController.getReceipts)
 router.post('/receipts', authenticate, upload.single('receipt'), receiptController.createReceipt)
+
+router.post('/tagging', authenticate, taggingController.addTag)
+router.delete('/tagging/:id', authenticate, paramsCheck, taggingController.removeTag)
 
 
 module.exports = router

@@ -21,7 +21,7 @@ const tagCheck = async (req, res, next) => {
 
 const paramsCheck = async (req, res, next) => {
   try {
-    if (req.params.id) await param('id').custom((id) => parseInt(id)).withMessage('Invalid tag id.').run(req)
+    if (req.params.id) await param('id').custom((id) => parseInt(id)).withMessage('Invalid id.').run(req)
     return validationResultCheck(req, res, next)
   } catch (error) {
     next(error)
