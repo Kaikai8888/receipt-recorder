@@ -2,6 +2,7 @@ const { Receipt, Store, Product, Purchase } = require('../models')
 const fs = require('fs')
 const paymentTypes = require('../docs/payment_types.json')
 const { success: successMsgs } = require('../docs/messages.json')
+const { upsertOnFields } = require('../modules/models.js')
 
 module.exports = {
   createReceipt(req, res, next) {
@@ -12,6 +13,7 @@ module.exports = {
         if (error) next(error)
         const lines = data.toString().split('\r\n')
         const receipt = { UserId }
+        const products = []
         const purchases = []
 
         // block duplicate receipt upload
@@ -26,8 +28,6 @@ module.exports = {
           tel: getAfterColon(lines[1]),
           gstReg: getAfterColon(lines[2])
         }
-        const [{ id: StoreId }, _] = await Store.findOrCreate({ where: store, raw: true, attributes: ['id'] })
-        receipt.StoreId = StoreId
 
         //parse receipt date
         const [date, time] = lines[4].split(/\s+/).map(getAfterColon)
@@ -46,14 +46,14 @@ module.exports = {
           }
           if (!product.productNo) throw new Error('format')
           product.name = productInfo.slice(firstBlankIndex)
-          const [{ id: ProductId }, _] = await Product.findOrCreate({ where: product })
+          products.push(product)
 
           //parse purchase info
           const values = lines[i + 1].split(/\s+/)
           const quantity = parseFloat(values[0])
           const price = parseFloat(values[2])
           if (isNaN(quantity) || isNaN(price)) throw new Error('format')
-          purchases.push({ ReceiptId: receipt.id, ProductId, quantity, price })
+          purchases.push({ ReceiptId: receipt.id, productNo: product.productNo, quantity, price })
           //skip to next product
           i += 2
         }
@@ -70,16 +70,35 @@ module.exports = {
         }
 
         //save to database
-        await Receipt.upsert(receipt)
+        const [{ id: StoreId }, _] = await upsertOnFields(Store, ['gstReg'], store)
+        await Receipt.create({ ...receipt, StoreId })
+        const results = await Promise.all(products.map(p => upsertOnFields(Product, ['productNo', 'StoreId'], { ...p, StoreId })))
+        results.forEach(result => {
+          const [product, _] = result
+          purchases.some(purchase => {
+            if (purchase.productNo !== product.dataValues.productNo) return false
+            purchase.ProductId = product.dataValues.id
+            delete purchase.productNo
+            return true
+          })
+        })
         await Purchase.bulkCreate(purchases)
-
-        const result = await Receipt.findByPk(receipt.id, { include: { model: Product, as: 'Products' } })
-        return res.json({ status: 'success', message: successMsgs.general, receipt, store, purchases, result })
+        return res.json({ status: 'success', message: successMsgs.general })
 
       } catch (error) {
         next(error)
       }
     })
+  },
+  async getReceipts(req, res, next) {
+    try {
+      const UserId = req.user.id
+      const TagId = parseInt(req.query.tagId)
+      //calculate total, subtotal, items, qty
+      const receipts = await Receipt.findAll({ where: { UserId }, include: { model: Product, as: 'Products' } })
+    } catch (error) {
+      next(error)
+    }
   }
 }
 
