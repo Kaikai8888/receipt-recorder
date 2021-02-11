@@ -8,6 +8,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      StoreId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        reference: {
+          model: 'Stores',
+          key: 'id',
+        }
+      },
       productNo: {
         type: Sequelize.BIGINT,
         allowNull: false
