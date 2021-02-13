@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "set \"NODE_ENV=test\" && mocha test/*.js --exit --recursive --timeout 5000",
     "reset": "npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
     "start": "npm run reset && node app.js",
     "dev": "npx sequelize-cli db:migrate && nodemon app.js"
@@ -15,17 +15,21 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "chai": "^4.3.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
     "faker": "^5.3.1",
     "jsonwebtoken": "^8.5.1",
+    "mocha": "^8.3.0",
     "multer": "^1.4.2",
     "mysql2": "^2.2.5",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "redis": "^3.0.2",
     "sequelize": "^6.5.0",
-    "sequelize-cli": "^6.2.0"
+    "sequelize-cli": "^6.2.0",
+    "sinon": "^9.2.4",
+    "supertest": "^6.1.3"
   }
 }

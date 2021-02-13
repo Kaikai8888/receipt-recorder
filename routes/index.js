@@ -2,14 +2,17 @@ const express = require('express')
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
 const router = express.Router()
-const passport = require('../config/passport.js')
 const userController = require('../controllers/userController.js')
 const tagController = require('../controllers/tagController.js')
 const receiptController = require('../controllers/receiptController.js')
 const taggingController = require('../controllers/taggingController.js')
-
 const { signinCheck, tagCheck, paramsCheck } = require('../middlewares/validator.js')
-const authenticate = passport.authenticate('jwt', { session: false })
+const passport = require('../config/passport.js')
+
+function authenticate(req, res, next) {
+  console.log('@@helpers')
+  return passport.authenticate('jwt', { session: false })(req, res, next)
+}
 
 //all path starts with prefix '/api', which has already been set in app.js file
 router.post('/signin', signinCheck, userController.signIn)

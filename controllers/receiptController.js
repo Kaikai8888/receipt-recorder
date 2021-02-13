@@ -4,12 +4,17 @@ const paymentTypes = require('../docs/payment_types.json')
 const { success: successMsgs } = require('../docs/messages.json')
 const { upsertOnFields } = require('../modules/models.js')
 const { roundTo2Decimal } = require('../modules/utils.js')
+const helpers = require('../modules/_helpers')
 const excludedCols = ['createdAt', 'updatedAt', 'StoreId', 'UserId']
 
 module.exports = {
   createReceipt(req, res, next) {
     const { file } = req
-    const UserId = req.user.id
+    const UserId = helpers.getUser(req).id
+    console.log('UserId-1', UserId)
+    if (!file) next(new Error('fileMissing'))
+    console.log('UserId-2', UserId)
+
     fs.readFile(file.path, async (error, data) => {
       try {
         if (error) next(error)
@@ -35,7 +40,6 @@ module.exports = {
         const [date, time] = lines[4].split(/\s+/).map(getAfterColon)
         const [day, month, year] = date.split('.')
         receipt.date = new Date(`${year}-${month}-${day}T${time}`)
-        console.log('@@date', receipt.date.toLocaleString())
         if (receipt.date.toString() === 'Invalid Date') throw new Error('format')
 
         //parse products and purchases data

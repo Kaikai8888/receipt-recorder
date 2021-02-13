@@ -22,3 +22,5 @@ app.use((error, req, res, next) => {
   res.status(500).json({ status: 'error', message: 'Unexpected error. Please try again later' })
 })
 app.listen(process.env.PORT, () => console.log(`App is listening on ${process.env.BASE_URL}`))
+
+module.exports = app
