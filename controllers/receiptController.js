@@ -52,7 +52,7 @@ module.exports = {
             productNo: parseInt(productInfo.slice(0, firstBlankIndex))
           }
           if (!product.productNo) throw new Error('format')
-          product.name = productInfo.slice(firstBlankIndex)
+          product.name = productInfo.slice(firstBlankIndex + 1)
           products.push(product)
 
           //parse purchase info
