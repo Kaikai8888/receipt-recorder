@@ -10,7 +10,6 @@ const { signinCheck, tagCheck, paramsCheck } = require('../middlewares/validator
 const passport = require('../config/passport.js')
 
 function authenticate(req, res, next) {
-  console.log('@@helpers')
   return passport.authenticate('jwt', { session: false })(req, res, next)
 }
 

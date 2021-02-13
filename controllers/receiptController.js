@@ -11,9 +11,7 @@ module.exports = {
   createReceipt(req, res, next) {
     const { file } = req
     const UserId = helpers.getUser(req).id
-    console.log('UserId-1', UserId)
     if (!file) next(new Error('fileMissing'))
-    console.log('UserId-2', UserId)
 
     fs.readFile(file.path, async (error, data) => {
       try {

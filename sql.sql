@@ -1,7 +1,7 @@
 CREATE DATABASE receipts_dev;
 CREATE DATABASE receipts_test;
 
-USE receipts_dev;
+USE receipts_test;
 
 SELECT * FROM users;
 SELECT * FROM tags;
