@@ -32,7 +32,7 @@ describe('# receipt request', () => {
 
           Receipt.findByPk(1, {
             include: [
-              { model: Product, as: 'Products' },
+              { model: Product, as: 'Products', order: ['productNo', 'ASC'] },
               { model: Store }
             ]
           }).then(r => {
