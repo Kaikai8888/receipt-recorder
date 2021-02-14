@@ -5,7 +5,7 @@ With this API, you can upload and categorized your receipts with self-created ta
 
 ## Table of Content
 * [API Document](#API_Document)
-* [ERD Diagram](#ERD_Diagram)
+* [ER Diagram](#ER_Diagram)
 * [Server](#Server)
 * [Features](#Features)
 * [Installation](#Installation)
@@ -14,7 +14,7 @@ With this API, you can upload and categorized your receipts with self-created ta
 ## API_Document
 For API detailed information, please checked in [Swagger](https://app.swaggerhub.com/apis-docs/Kaikai8888/receipt-recorder_api/1.0.0)
 
-## ERD_Diagram
+## ER_Diagram
 ![ERD](/docs/Invoice-Recorder-ERD.png)
 
 ## Server
