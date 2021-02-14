@@ -5,9 +5,7 @@ module.exports = {
   async addTag(req, res, next) {
     try {
       const { id: UserId } = req.user
-      const ReceiptId = parseInt(req.body.ReceiptId)
-      const TagId = parseInt(req.body.TagId)
-      if (!ReceiptId || !TagId) throw new Error('invalidInput')
+      const { ReceiptId, TagId } = req.body
       const receipt = await Receipt.findOne({ where: { id: ReceiptId, UserId } })
       if (!receipt) throw new Error('notFound')
       const tag = await Tag.findOne({ where: { id: TagId, UserId } })

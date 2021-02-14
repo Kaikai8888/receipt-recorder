@@ -26,7 +26,7 @@ router.delete('/tags/:id', authenticate, idCheck(), tagController.deleteTag)
 router.get('/receipts', authenticate, idCheck('query', 'tagId'), receiptController.getReceipts)
 router.post('/receipts', authenticate, upload.single('receipt'), receiptController.createReceipt)
 
-router.post('/tagging', authenticate, taggingController.addTag)
+router.post('/tagging', authenticate, idCheck('body', 'ReceiptId'), idCheck('body', 'TagId'), taggingController.addTag)
 router.delete('/tagging/:id', authenticate, idCheck(), taggingController.removeTag)
 
 

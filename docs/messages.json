@@ -7,8 +7,9 @@
     "400": {
       "format": "Unexpected receipt format.",
       "payment": "Unexpected payment type.",
-      "invalidInput": "Invalid input (params, form input....)",
-      "fileMissing": "Required file is missing."
+      "invalidId": "Invalid id (in url path, query string or form body)",
+      "fileMissing": "Required file is missing.",
+      "nameMissing": "Required name field is missing or empty"
     },
     "404": {
       "notFound": "Target resource not found."

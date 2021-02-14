@@ -11,25 +11,19 @@ const signinCheck = async (req, res, next) => {
 }
 
 const tagCheck = async (req, res, next) => {
-  try {
-    await body('name').trim().notEmpty().withMessage('Name field is empty.').run(req)
-    return validationResultCheck(req, res, next)
-  } catch (error) {
-    next(error)
-  }
+  if (!req.body.name || !req.body.name.trim()) return next(new Error('nameMissing'))
+  next()
 }
 
 const idCheck = (paramType = 'params', field = 'id') => {
-  return async (req, res, next) => {
-    try {
-      if (!req[paramType]) throw new Error('Target validation field not found')
-      if (req[paramType][field]) await check(field).custom((id) => parseInt(id)).withMessage(`Invalid ${field}.`).run(req)
-      return validationResultCheck(req, res, next)
-    } catch (error) {
-      next(error)
-    }
+  return (req, res, next) => {
+    if (!req[paramType]) return next(new Error('Target validation field not found'))
+    const id = parseFloat(req[paramType][field])
+    if (!Number.isInteger(id)) return next(new Error('invalidId'))
+    next()
   }
 }
+
 
 function validationResultCheck(req, res, next) {
   const errorResults = validationResult(req)
