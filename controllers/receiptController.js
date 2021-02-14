@@ -123,6 +123,7 @@ module.exports = {
           },
           attributes: []
         })
+        if (!receipts) throw new Error('notFound')
         receipts = receipts.TaggedReceipts
       }
 
@@ -142,6 +143,8 @@ function getAfterColon(line) {
 function formatReceipt(receipt) {
   receipt = {
     ...receipt.dataValues,
+    tender: parseFloat(receipt.tender) || null,
+    change: parseFloat(receipt.change) || null,
     qty: 0,
     items: 0,
     totalAmount: 0
