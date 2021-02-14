@@ -1,14 +1,15 @@
 # Receipt Recorder (API)
 This is the backend API for receipt recorder, created with Node.js, express.js, MySQL and Redis.
+
 With this API, you can upload and categorized your receipts with self-created tags.
 
 ## Table of Content
-[API Document](#API_Document)
-[ERD Diagram](#ERD_Diagram)
-[Server](#Server)
-[Features](#Features)
-[Installation](#Installation)
-[Testing](#Testing)
+* [API Document](#API_Document)
+* [ERD Diagram](#ERD_Diagram)
+* [Server](#Server)
+* [Features](#Features)
+* [Installation](#Installation)
+* [Testing](#Testing)
 
 ## API_Document
 For API detailed information, please checked in [Swagger](https://app.swaggerhub.com/apis-docs/Kaikai8888/receipt-recorder_api/1.0.0)
@@ -52,11 +53,13 @@ npm install
 4. Start Redis Server
 
 ```bash
-# Windows
+# For Windows
 cd [Your Redis server folder]
 redis-server redis.windows.conf
 ```
+
 5. Setup environment variables:
+
   Create `.env` file follow `.env.example` and set your own `JWT_SECRET`
 
 6. (For Mac) Replace scripts in `package.json` with below scripts

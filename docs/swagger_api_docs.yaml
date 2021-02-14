@@ -1,7 +1,14 @@
-swagger: 2.0
+swagger: "2.0"
 info:
   title: Receipt Recorder API
-  description: An API for logged-in user to upload and tagged receipts
+  description: |
+    An API for logged-in user to upload and tagged receipts
+    
+    **Authorization steps:**
+    1. **POST /signin** with the following demo account info to get the token:
+      > * email: user1@example.com
+      > * password: 12345678
+    2. Add **'Bearer '** in front of the token, and paste into **Authorize > value** feild
   version: 1.0.0
 host: receipt-recorder.herokuapp.com
 basePath: /api
@@ -11,6 +18,11 @@ consumes:
   - application/json
 produces:
   - application/json
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 tags:
   - name: User
     description: sign in and sign out
@@ -25,21 +37,25 @@ paths:
     post:
       tags:
         - User
-      summary: sign in
+      summary: Sign in
       consumes:
         - application/x-www-form-urlencoded
       parameters:
         - in: formData
           name: email
           type: string
+          format: email
           required: true
         - in: formData
           name: password
           type: string
+          format: password
           required: true
+          minLength: 8
+          maxLength: 12
       responses:
         '200':
-          description: Successfully sing in and return token
+          description: Successfully sign in and return token
           schema:
             type: object
             properties:
@@ -49,6 +65,28 @@ paths:
               token:
                 type: string
                 example: '[token]'
+        '400':
+          description: |
+            **Two errors:** (actual error message as below)
+            1. Invalid email format
+            2. Invalid password: password length should be between 8 to 12
+            characters.
+            
+            * If only one errors occurs, message field will be a string
+            * If both errors occur, message field will be an array of error messages
+          schema:
+            allOf:
+              - $ref: '#/definitions/Error'
+              - type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: array
+                    items:
+                      type: string
+                    example: ["Invalid email format", "Invalid password: password length should be between 8 to 12"]
         '401':
           $ref: '#/responses/UnAuthorized'
         '403':
@@ -58,25 +96,16 @@ paths:
             2. Wrong email or password.
           schema:
             $ref: '#/definitions/Error'
-        '404':
-          description: >
-            **Two scenerios:** (actual error message as below)
-
-            1. Invalid email format
-
-            2. Invalid password: password length should be between 8 to 12
-            characters.
-          schema:
-            $ref: '#/definitions/Error'
         '500':
           $ref: '#/responses/UnexpectedError'
   /signout:
     post:
       tags:
         - User
-      summary: sign out
+      summary: Sign out
       description: Blacklist the token
-      parameters: null
+      security:
+        - Bearer: []      
       responses:
         '200':
           $ref: '#/responses/SuccessGeneral'
@@ -88,16 +117,258 @@ paths:
     get:
       tags:
         - Tag
-      summary: get all tags
+      summary: Get all tags
+      security:
+        - Bearer: []  
       responses:
         '200':
+          description: successful operation
           schema:
             type: array
             items:
               $ref: '#/definitions/Tag'
+        '401':
+          $ref: '#/responses/UnAuthorized'
+        '500':
+          $ref: '#/responses/UnexpectedError'
+    post:
+      tags:
+        - Tag
+      summary: Create tag
+      security:
+        - Bearer: []
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - in: formData
+          name: name
+          type: string
+          required: true 
+      responses:
+        '200': 
+          $ref: '#/responses/SuccessGeneral'        
+        '400':
+          $ref: '#/responses/NameMissing'           
+        '401':
+          $ref: '#/responses/UnAuthorized'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/UnexpectedError'
+  /tags/{tagId}:
+    get:
+      tags:
+        - Tag
+      summary: Get specific tag
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: tagId
+          type: integer
+          required: true        
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Tag'
+        '400':
+          $ref: '#/responses/InvalidId'
+        '401':
+          $ref: '#/responses/UnAuthorized'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/UnexpectedError'
+    put:
+      tags:
+        - Tag
+      summary: Get specific tag
+      security:
+        - Bearer: []
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - in: path
+          name: tagId
+          type: integer
+          required: true 
+        - in: formData
+          name: name
+          type: string
+          required: true 
+      responses:
+        '200': 
+          $ref: '#/responses/SuccessGeneral'    
+        '400':
+          description: |
+            **Two scenerios:** (actual error message as below)
+            1. Required name field is missing or empty
+            2. Id is invalid or missing
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          $ref: '#/responses/UnAuthorized'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/UnexpectedError'      
+    delete:
+      tags:
+        - Tag
+      summary: Get specific tag
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: tagId
+          type: integer
+          required: true        
+      responses:
+        '200': 
+          $ref: '#/responses/SuccessGeneral'    
+        '400':
+          $ref: '#/responses/InvalidId'
+        '401':
+          $ref: '#/responses/UnAuthorized'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/UnexpectedError'  
+  /receipts:
+    get:
+      tags:
+        - Receipt
+      summary: Get all receipts. Can filter results by tags.
+      security:
+        - Bearer: []
+      parameters:
+        - in: query
+          name: tagId
+          type: integer
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Receipt'
+        '400':
+          $ref: '#/responses/InvalidId'
+        '401':
+          $ref: '#/responses/UnAuthorized'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/UnexpectedError'
+    post:
+      tags:
+        - Receipt
+      summary: Upload receipt
+      description: |
+        ### **Receipt Format**
+        For detailed format, please follow the [example](https://raw.githubusercontent.com/Kaikai8888/receipt-recorder/master/docs/quiz_sample_receipts/sample_receipt_2.txt)
+        #### **Structure:**
+        * line 1 to 6:
+          - store info(name, tel, GST Reg.)
+          - receipt date
+          - receipt id: saved as receiptNo in DB, so that different user can upload the same receipt, and manage their own receipt records
+        * divider '+----+' to blank line:
+          - product info: odd-numbered lines
+          - purcahse info: even-numbered lines
+        * after the first blank line after divider '+----+'':
+          - payment type: limited to CASH, VISA, MASTER
+          - *(optional)* tender, change 
+      security:
+        - Bearer: []
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: receipt
+          type: file
+          required: true
+      responses:
+        '200': 
+          $ref: '#/responses/SuccessGeneral'        
+        '400':
+          description: |
+            **Three Scenerios :** (actual error message as bellow)
+            1. Required file is missing.
+            2. Unexpected receipt format.
+            3. Unexpected payment type.
+          schema:
+            properties:
+              status:
+                type: string
+                example: error
+              message:
+                type: string
+                example: Required file is missing.          
+        '401':
+          $ref: '#/responses/UnAuthorized'
+        '500':
+          $ref: '#/responses/UnexpectedError'      
+  /tagging:
+    post:
+      tags:
+        - Tagging
+      summary: Tag a receipt
+      security:
+        - Bearer: []
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - in: formData
+          name: TagId
+          type: integer
+          required: true
+        - in: formData
+          name: ReceiptId
+          type: integer
+          required: true
+      responses:
+        '200': 
+          $ref: '#/responses/SuccessGeneral'        
+        '400':
+          $ref: '#/responses/InvalidId'            
+        '401':
+          $ref: '#/responses/UnAuthorized'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/UnexpectedError'      
+    delete:
+      tags:
+        - Tagging
+      summary: Untag a receipt
+      security:
+        - Bearer: []
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - in: formData
+          name: TagId
+          type: integer
+          required: true
+        - in: formData
+          name: ReceiptId
+          type: integer
+          required: true
+      responses:
+        '200': 
+          $ref: '#/responses/SuccessGeneral'        
+        '400':
+          $ref: '#/responses/InvalidId'            
+        '401':
+          $ref: '#/responses/UnAuthorized'
+        '404':
+          $ref: '#/responses/NotFound'
+        '500':
+          $ref: '#/responses/UnexpectedError'      
 responses:
   SuccessGeneral:
-    description: ok
+    description: Successful operation
     schema:
       type: object
       properties:
@@ -127,6 +398,36 @@ responses:
         message:
           type: string
           example: UnAuthorized
+  InvalidId:
+    description: Id is invalid or missing (in url path, query string or form body)
+    schema:
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+          example: Id is invalid or missing (in url path, query string or form body)
+  NameMissing:
+    description: Required name field is missing or empty
+    schema:
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+          example: Required name field is missing or empty
+  NotFound:
+    description: Target resource not found
+    schema:
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+          example: Target resource not found.
 definitions:
   Error:
     type: object
@@ -142,8 +443,96 @@ definitions:
     properties:
       id:
         type: integer
-        format: int64
-components:
-  securitySchemes:
-    bearerAuth:
-      type: https
+        format: int32
+        example: 1
+      name:
+        type: string
+        maxLength: 255
+        example: food
+  Receipt:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+        example: 1
+      receiptNo:
+        type: integer
+        format: int32
+        example: 122769
+      payment:
+        description: All in capital letters
+        type: string
+        enum: [VISA, CASH, MASTER]
+      date:
+        description: |
+          Can be passed into Date constructor to create date object
+        type: string
+        format: date-time
+        example: "2020-06-13T20:11:09.000Z"
+      tender:
+        description: nullable
+        type: number
+        format: float
+        example: 50
+      change:
+        description: nullable
+        type: number
+        format: float
+        example: 7.3
+      Products:
+        type: array
+        items:
+          $ref: '#/definitions/Product'
+      Store:
+        $ref: "#/definitions/Store"
+      qty:
+        description: total quantity
+        type: integer
+        format: int32
+        example: 5
+      items:
+        description: total number of products
+        type: integer
+        format: int32
+        example: 2
+      totalAmount:
+        type: number
+        format: float
+        example: 42.7       
+  Product:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+        example: 1
+      name:
+        type: string
+        maxLength: 255
+        example: Viceroy Menthol Super
+      quantity:
+        type: integer
+        format: int32
+        example: 3
+      price:
+        type: number
+        format: float
+        example: 11.7
+      subtotal:
+        type: number
+        format: float
+        example: 35.1
+  Store:
+    type: object
+    properties:
+      name:
+        type: string
+        maxLength: 255
+        example: Bob's Store         
+      id:
+        type: integer
+        format: int32
+        example: 1
+        
+        
