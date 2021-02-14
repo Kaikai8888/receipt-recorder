@@ -98,7 +98,7 @@ module.exports = {
   },
   async getReceipts(req, res, next) {
     try {
-      const UserId = req.user.id
+      const UserId = helpers.getUser(req).id
       const TagId = parseInt(req.query.tagId)
       const receiptFilter = {
         include: [
@@ -161,6 +161,7 @@ function formatReceipt(receipt) {
     receipt.totalAmount += subtotal
     return {
       id: product.id,
+      productNo: product.productNo,
       name: product.name,
       quantity,
       price,
