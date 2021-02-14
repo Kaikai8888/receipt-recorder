@@ -4,10 +4,11 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "set \"NODE_ENV=test\" && mocha test/*.js --exit --recursive --timeout 5000",
+    "start": "mkdir temp && npm run reset && node app.js",
+    "dev": "set \"NODE_ENV=development\" && npx sequelize-cli db:migrate && nodemon app.js",
     "reset": "npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
-    "start": "npm run reset && node app.js",
-    "dev": "set \"NODE_ENV=development\" && npx sequelize-cli db:migrate && nodemon app.js"
+    "clear-temp": "rm ./temp/*",
+    "test": "set \"NODE_ENV=test\" && mocha test/*.js --exit --recursive --timeout 5000"
   },
   "keywords": [],
   "author": "",
