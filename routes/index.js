@@ -6,7 +6,7 @@ const userController = require('../controllers/userController.js')
 const tagController = require('../controllers/tagController.js')
 const receiptController = require('../controllers/receiptController.js')
 const taggingController = require('../controllers/taggingController.js')
-const { signinCheck, tagCheck, paramsCheck } = require('../middlewares/validator.js')
+const { signinCheck, tagCheck, idCheck } = require('../middlewares/validator.js')
 const passport = require('../config/passport.js')
 
 function authenticate(req, res, next) {
@@ -18,16 +18,16 @@ router.post('/signin', signinCheck, userController.signIn)
 router.post('/signout', authenticate, userController.signOut)
 
 router.get('/tags', authenticate, tagController.getTags)
-router.get('/tags/:id', authenticate, paramsCheck, tagController.getTag)
+router.get('/tags/:id', authenticate, idCheck(), tagController.getTag)
 router.post('/tags', authenticate, tagCheck, tagController.createTag)
-router.put('/tags/:id', authenticate, paramsCheck, tagCheck, tagController.editTag)
-router.delete('/tags/:id', authenticate, paramsCheck, tagController.deleteTag)
+router.put('/tags/:id', authenticate, idCheck(), tagCheck, tagController.editTag)
+router.delete('/tags/:id', authenticate, idCheck(), tagController.deleteTag)
 
-router.get('/receipts', authenticate, receiptController.getReceipts)
+router.get('/receipts', authenticate, idCheck('query', 'tagId'), receiptController.getReceipts)
 router.post('/receipts', authenticate, upload.single('receipt'), receiptController.createReceipt)
 
 router.post('/tagging', authenticate, taggingController.addTag)
-router.delete('/tagging/:id', authenticate, paramsCheck, taggingController.removeTag)
+router.delete('/tagging/:id', authenticate, idCheck(), taggingController.removeTag)
 
 
 module.exports = router

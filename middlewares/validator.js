@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require('express-validator')
+const { body, check, validationResult } = require('express-validator')
 
 const signinCheck = async (req, res, next) => {
   try {
@@ -19,12 +19,15 @@ const tagCheck = async (req, res, next) => {
   }
 }
 
-const paramsCheck = async (req, res, next) => {
-  try {
-    if (req.params.id) await param('id').custom((id) => parseInt(id)).withMessage('Invalid id.').run(req)
-    return validationResultCheck(req, res, next)
-  } catch (error) {
-    next(error)
+const idCheck = (paramType = 'params', field = 'id') => {
+  return async (req, res, next) => {
+    try {
+      if (!req[paramType]) throw new Error('Target validation field not found')
+      if (req[paramType][field]) await check(field).custom((id) => parseInt(id)).withMessage(`Invalid ${field}.`).run(req)
+      return validationResultCheck(req, res, next)
+    } catch (error) {
+      next(error)
+    }
   }
 }
 
@@ -42,5 +45,5 @@ function validationResultCheck(req, res, next) {
 module.exports = {
   signinCheck,
   tagCheck,
-  paramsCheck
+  idCheck
 }
