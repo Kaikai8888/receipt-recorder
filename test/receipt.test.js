@@ -25,6 +25,7 @@ describe('# receipt request', () => {
       request(app)
         .post('/api/receipts')
         .attach('receipt', './test/test_receipts/sample_receipt_2.txt')
+        .expect(200)
         .end((error, res) => {
           if (error) return done(error)
           expect(res.body).to.be.an('object')
@@ -43,6 +44,22 @@ describe('# receipt request', () => {
             receipt.Store.should.nested.include({
               id: 1, name: 'Bob\'s Store', tel: '0123456789', gstReg: '0123456789'
             })
+            done()
+          }).catch(error => done(error))
+        })
+    })
+
+    it(' - upload existing receipt (with the same receipt id)', (done) => {
+      request(app)
+        .post('/api/receipts')
+        .attach('receipt', './test/test_receipts/sample_receipt_2.txt')
+        .expect(200)
+        .end((error, res) => {
+          if (error) return done(error)
+          expect(res.body).to.be.an('object')
+          res.body.message.should.equal(msgs.success.already)
+          Receipt.findAll({ raw: true }).then(r => {
+            r.length.should.equal(1)
             done()
           }).catch(error => done(error))
         })

@@ -21,11 +21,11 @@ module.exports = {
         const products = []
         const purchases = []
 
-        // block duplicate receipt upload
+        // check if receipt already exists
         receipt.receiptNo = parseInt(getAfterColon(lines[5]))
         if (!receipt.receiptNo) throw new Error('format')
-        const duplicateReceipt = await Receipt.findOne({ where: receipt })
-        if (duplicateReceipt) return res.json({ status: 'success', message: successMsgs.already })
+        const exist = await Receipt.findOne({ where: receipt })
+        if (exist) return res.json({ status: 'success', message: successMsgs.already })
 
         //parse store data
         const store = {
