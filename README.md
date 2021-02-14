@@ -61,9 +61,10 @@ redis-server redis.windows.conf
 
 5. Setup environment variables:
 
-  Create `.env` file follow `.env.example` and set your own `JWT_SECRET`
+   Create `.env` file follow `.env.example` and set your own `JWT_SECRET`
 
 6. (For Mac) Replace scripts in `package.json` with below scripts
+
 ```json
   {
     "scripts": {
