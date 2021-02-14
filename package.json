@@ -7,7 +7,7 @@
     "test": "set \"NODE_ENV=test\" && mocha test/*.js --exit --recursive --timeout 5000",
     "reset": "npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
     "start": "npm run reset && node app.js",
-    "dev": "npx sequelize-cli db:migrate && nodemon app.js"
+    "dev": "set \"NODE_ENV=development\" && npx sequelize-cli db:migrate && nodemon app.js"
   },
   "keywords": [],
   "author": "",
