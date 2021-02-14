@@ -91,6 +91,26 @@ describe('# receipt request', () => {
         })
     })
 
+    it(' - file missing', (done) => {
+      request(app)
+        .post('/api/receipts')
+        .expect(400, { status: 'error', message: msgs.error[400].fileMissing }, done)
+    })
+
+    it(' - Unexpected receipt format: missing productNo', (done) => {
+      request(app)
+        .post('/api/receipts')
+        .attach('receipt', './test/test_receipts/format-err_productNo.txt')
+        .expect(400, { status: 'error', message: msgs.error[400].format }, done)
+    })
+
+    it(' - Wrong payment type', (done) => {
+      request(app)
+        .post('/api/receipts')
+        .attach('receipt', './test/test_receipts/payment_err.txt')
+        .expect(400, { status: 'error', message: msgs.error[400].payment }, done)
+    })
+
     after(async () => {
       truncateTables(User, Receipt, Product, Purchase, Store)
       this.authenticate.restore()
