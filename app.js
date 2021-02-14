@@ -11,7 +11,7 @@ const { error: errMsgs } = require('./docs/messages.json')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(passport.initialize())
 
-app.get('/', (req, res) => res.send('This is invoice recorder API backend server.'))
+app.get('/', (req, res) => res.send('This is receipt recorder API backend server.'))
 app.use('/api', router)
 app.use((error, req, res, next) => {
   console.log(error)
