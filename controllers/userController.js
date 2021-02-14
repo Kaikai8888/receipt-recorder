@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { User, sequelize } = require('../models')
 const redis = require('../config/redis.js')
+const { success: successMsgs } = require('../docs/messages.json')
+
 
 module.exports = {
   async signIn(req, res, next) {
@@ -32,7 +34,7 @@ module.exports = {
       } catch (error) {
         next(error)
       }
-      return res.json({ status: 'success', message: 'Successfully sign out' })
+      return res.json({ status: 'success', message: successMsgs.general })
     })
   }
 }

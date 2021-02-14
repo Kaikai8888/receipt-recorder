@@ -1,4 +1,5 @@
 const { Tag } = require('../models')
+const { success: successMsgs } = require('../docs/messages.json')
 
 module.exports = {
   async getTags(req, res, next) {
@@ -15,7 +16,7 @@ module.exports = {
       const UserId = req.user.id
       const { id } = req.params
       const tag = await Tag.findOne({ where: { UserId, id }, attributes: ['id', 'name'] })
-      if (!tag) return res.status(404).json({ status: 'error', message: 'Cannot find the tag.' })
+      if (!tag) throw new Error('notFound')
       return res.json(tag)
     } catch (error) {
       next(error)
@@ -26,7 +27,7 @@ module.exports = {
       const UserId = req.user.id
       const { name } = req.body
       await Tag.findOrCreate({ where: { UserId, name } })
-      return res.json({ status: 'success', message: 'ok' })
+      return res.json({ status: 'success', message: successMsgs.general })
     } catch (error) {
       next(error)
     }
@@ -37,9 +38,9 @@ module.exports = {
       const { name } = req.body
       const { id } = req.params
       const tag = await Tag.findOne({ where: { id, UserId } })
-      if (!tag) return res.status(404).json({ status: 'error', message: 'Cannot find the tag.' })
+      if (!tag) throw new Error('notFound')
       await tag.update({ name })
-      return res.json({ status: 'success', message: 'ok' })
+      return res.json({ status: 'success', message: successMsgs.general })
     } catch (error) {
       next(error)
     }
@@ -49,9 +50,9 @@ module.exports = {
       const UserId = req.user.id
       const { id } = req.params
       const tag = await Tag.findOne({ where: { id, UserId } })
-      if (!tag) return res.status(404).json({ status: 'error', message: 'Cannot find the tag.' })
+      if (!tag) throw new Error('notFound')
       await tag.destroy()
-      return res.json({ status: 'success', message: 'ok' })
+      return res.json({ status: 'success', message: successMsgs.general })
     } catch (error) {
       next(error)
     }

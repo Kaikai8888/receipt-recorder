@@ -1,0 +1,149 @@
+swagger: 2.0
+info:
+  title: Receipt Recorder API
+  description: An API for logged-in user to upload and tagged receipts
+  version: 1.0.0
+host: receipt-recorder.herokuapp.com
+basePath: /api
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+tags:
+  - name: User
+    description: sign in and sign out
+  - name: Tag
+    description: tag CRUD
+  - name: Receipt
+    description: upload / read receipts
+  - name: Tagging
+    description: tag / untag receipts
+paths:
+  /signin:
+    post:
+      tags:
+        - User
+      summary: sign in
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - in: formData
+          name: email
+          type: string
+          required: true
+        - in: formData
+          name: password
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Successfully sing in and return token
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: success
+              token:
+                type: string
+                example: '[token]'
+        '401':
+          $ref: '#/responses/UnAuthorized'
+        '403':
+          description: |
+            **Two scenerios:** (actual error message as below)
+            1. The email hasn't been registered
+            2. Wrong email or password.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: >
+            **Two scenerios:** (actual error message as below)
+
+            1. Invalid email format
+
+            2. Invalid password: password length should be between 8 to 12
+            characters.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          $ref: '#/responses/UnexpectedError'
+  /signout:
+    post:
+      tags:
+        - User
+      summary: sign out
+      description: Blacklist the token
+      parameters: null
+      responses:
+        '200':
+          $ref: '#/responses/SuccessGeneral'
+        '401':
+          $ref: '#/responses/UnAuthorized'
+        '500':
+          $ref: '#/responses/UnexpectedError'
+  /tags:
+    get:
+      tags:
+        - Tag
+      summary: get all tags
+      responses:
+        '200':
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tag'
+responses:
+  SuccessGeneral:
+    description: ok
+    schema:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: ok
+  UnexpectedError:
+    description: Unexpected error
+    schema:
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+          example: Unexpected error. Please try again later
+  UnAuthorized:
+    description: UnAuthorized
+    schema:
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+          example: UnAuthorized
+definitions:
+  Error:
+    type: object
+    properties:
+      status:
+        type: string
+        example: error
+      message:
+        type: string
+        example: '[specific error message]'
+  Tag:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+components:
+  securitySchemes:
+    bearerAuth:
+      type: https

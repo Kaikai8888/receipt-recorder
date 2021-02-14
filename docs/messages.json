@@ -11,7 +11,7 @@
       "fileMissing": "Required file is missing."
     },
     "404": {
-      "notFound": "Resource not found."
+      "notFound": "Target resource not found."
     }
   }
 }
