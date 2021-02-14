@@ -15,11 +15,12 @@ const tagCheck = async (req, res, next) => {
   next()
 }
 
-const idCheck = (paramType = 'params', field = 'id') => {
+const idCheck = (paramType = 'params', field = 'id', optional = false) => {
   return (req, res, next) => {
     if (!req[paramType]) return next(new Error('Target validation field not found'))
-    const id = parseFloat(req[paramType][field])
-    if (!Number.isInteger(id)) return next(new Error('invalidId'))
+    const id = req[paramType][field]
+    if (optional && !id) return next()
+    if (!Number.isInteger(parseFloat(id))) return next(new Error('invalidId'))
     next()
   }
 }
