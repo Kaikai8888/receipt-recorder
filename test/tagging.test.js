@@ -73,7 +73,7 @@ describe('# tagging request', () => {
         .end((error, res) => {
           if (error) return done(error)
           res.body.should.be.an('object')
-          res.body.message.should.not.equal(msgs.error.invalidId)
+          res.body.message.should.equal(msgs.error[400].invalidId)
           checkTagging(done)
         })
     })
@@ -86,7 +86,8 @@ describe('# tagging request', () => {
         .end((error, res) => {
           if (error) return done(error)
           res.body.should.be.an('object')
-          res.body.message.should.not.equal(msgs.error.invalidId)
+          res.body.message.should.equal(msgs.error[400].invalidId)
+
           checkTagging(done)
         })
     })
@@ -100,7 +101,7 @@ describe('# tagging request', () => {
         .end((error, res) => {
           if (error) return done(error)
           res.body.should.be.an('object')
-          res.body.message.should.not.equal(msgs.error.notFound)
+          res.body.message.should.equal(msgs.error[404].notFound)
           checkTagging(done)
         })
     })
@@ -113,7 +114,7 @@ describe('# tagging request', () => {
         .end((error, res) => {
           if (error) return done(error)
           res.body.should.be.an('object')
-          res.body.message.should.not.equal(msgs.error.notFound)
+          res.body.message.should.equal(msgs.error[404].notFound)
           checkTagging(done)
         })
     })
