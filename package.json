@@ -8,7 +8,8 @@
     "dev": "set \"NODE_ENV=development\" && npx sequelize-cli db:migrate && nodemon app.js",
     "reset": "npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
     "clear-temp": "rm ./temp/*",
-    "test": "set \"NODE_ENV=test\" && npx sequelize-cli db:migrate && mocha test/*.js --exit --recursive --timeout 5000"
+    "test": "set \"NODE_ENV=test\" && npx sequelize-cli db:migrate && mocha test/*.js --exit --recursive --timeout 5000",
+    "test-file": "set \"NODE_ENV=test\" && npx sequelize-cli db:migrate && mocha test/tagging.test.js --exit --recursive --timeout 5000"
   },
   "keywords": [],
   "author": "",

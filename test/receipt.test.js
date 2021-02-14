@@ -9,7 +9,6 @@ const allModel = [User, Receipt, Product, Purchase, Store, Tag, Tagging]
 const passport = require('../config/passport.js')
 const helpers = require('../modules/_helpers.js')
 const msgs = require('../docs/messages.json')
-const { tagCheck } = require('../middlewares/validator.js')
 const truncateTables = async (...models) => {
   await Promise.all(models.map(model => model.destroy({ where: {}, truncate: true })))
 }
