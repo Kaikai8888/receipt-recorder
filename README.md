@@ -18,7 +18,8 @@ For API detailed information, please checked in [Swagger](https://app.swaggerhub
 ![ERD](/docs/Invoice-Recorder-ERD.png)
 
 ## Server
-Server has been deployed to heroku. My hostname is https://receipt-recorder.herokuapp.com/
+Server has been deployed to Heroku. My hostname is https://receipt-recorder.herokuapp.com/
+
 **Demo Account:**
 * email: user1@example.com , user2@example.com
 * password: 12345678
