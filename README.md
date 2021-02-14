@@ -77,9 +77,9 @@ redis-server redis.windows.conf
   }
 ```
 
-7. Initialize the server
+7. Initialize the server and test on http://localhost:3000/
 
-```
+```bash
 npm run start
 ```
 
