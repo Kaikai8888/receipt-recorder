@@ -8,6 +8,7 @@ const receiptController = require('../controllers/receiptController.js')
 const taggingController = require('../controllers/taggingController.js')
 const { signinCheck, tagCheck, idCheck } = require('../middlewares/validator.js')
 const passport = require('../config/passport.js')
+const taggingCheck = [idCheck('body', 'ReceiptId'), idCheck('body', 'TagId')]
 
 function authenticate(req, res, next) {
   return passport.authenticate('jwt', { session: false })(req, res, next)
@@ -26,8 +27,8 @@ router.delete('/tags/:id', authenticate, idCheck(), tagController.deleteTag)
 router.get('/receipts', authenticate, idCheck('query', 'tagId'), receiptController.getReceipts)
 router.post('/receipts', authenticate, upload.single('receipt'), receiptController.createReceipt)
 
-router.post('/tagging', authenticate, idCheck('body', 'ReceiptId'), idCheck('body', 'TagId'), taggingController.addTag)
-router.delete('/tagging/:id', authenticate, idCheck(), taggingController.removeTag)
+router.post('/tagging', authenticate, ...taggingCheck, taggingController.addTag)
+router.delete('/tagging', authenticate, ...taggingCheck, taggingController.removeTag)
 
 
 module.exports = router

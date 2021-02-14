@@ -7,7 +7,7 @@
     "400": {
       "format": "Unexpected receipt format.",
       "payment": "Unexpected payment type.",
-      "invalidId": "Invalid id (in url path, query string or form body)",
+      "invalidId": "Id is invalid or missing (in url path, query string or form body)",
       "fileMissing": "Required file is missing.",
       "nameMissing": "Required name field is missing or empty"
     },
