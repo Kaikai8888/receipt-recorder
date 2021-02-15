@@ -1,10 +1,11 @@
 const { Tag } = require('../models')
 const { success: successMsgs } = require('../docs/messages.json')
+const helpers = require('../modules/_helpers')
 
 module.exports = {
   async getTags(req, res, next) {
     try {
-      const UserId = req.user.id
+      const UserId = helpers.getUser(req).id
       const tags = await Tag.findAll({ where: { UserId }, attributes: ['id', 'name'] })
       return res.json(tags)
     } catch (error) {
@@ -13,7 +14,7 @@ module.exports = {
   },
   async getTag(req, res, next) {
     try {
-      const UserId = req.user.id
+      const UserId = helpers.getUser(req).id
       const { id } = req.params
       const tag = await Tag.findOne({ where: { UserId, id }, attributes: ['id', 'name'] })
       if (!tag) throw new Error('notFound')
@@ -24,7 +25,7 @@ module.exports = {
   },
   async createTag(req, res, next) {
     try {
-      const UserId = req.user.id
+      const UserId = helpers.getUser(req).id
       const { name } = req.body
       await Tag.findOrCreate({ where: { UserId, name } })
       return res.json({ status: 'success', message: successMsgs.general })
@@ -34,7 +35,7 @@ module.exports = {
   },
   async editTag(req, res, next) {
     try {
-      const UserId = req.user.id
+      const UserId = helpers.getUser(req).id
       const { name } = req.body
       const { id } = req.params
       const tag = await Tag.findOne({ where: { id, UserId } })
@@ -47,7 +48,7 @@ module.exports = {
   },
   async deleteTag(req, res, next) {
     try {
-      const UserId = req.user.id
+      const UserId = helpers.getUser(req).id
       const { id } = req.params
       const tag = await Tag.findOne({ where: { id, UserId } })
       if (!tag) throw new Error('notFound')
