@@ -1,0 +1,12 @@
+{
+  "include": [
+    "controllers/receiptController.js",
+    "controllers/tagController.js",
+    "controllers/taggingController.js",
+    "controllers/userController.js"
+  ],
+  "reporter": [
+    "text",
+    "html"
+  ]
+}

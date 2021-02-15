@@ -95,8 +95,21 @@ npm run start
 ```
 npm run test
 ```
-Test with:
+### Current Test Coverage:
+[html version](./coverage/index.html)
+----------------------|---------|----------|---------|---------|-------------------
+File                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+----------------------|---------|----------|---------|---------|-------------------
+All files             |   78.95 |    73.53 |      75 |   80.15 | 
+ receiptController.js |   98.21 |    91.67 |     100 |     100 | 17
+ tagController.js     |   76.19 |    66.67 |      80 |   76.92 | 12-23,33
+ taggingController.js |     100 |      100 |     100 |     100 | 
+ userController.js    |   22.22 |        0 |       0 |      25 | 10-37
+----------------------|---------|----------|---------|---------|-------------------
+
+### Test with:
 - mocha: 8.3.0
 - chai: 4.3.0
 - sinon: 9.2.4
 - supertest: 6.1.3
+- nyc: 15.1.0
