@@ -97,6 +97,21 @@ describe('# tag request', () => {
         })
     })
 
+    it(' - can\'t edit other\'s tag', (done) => {
+      request(app)
+        .put('/api/tags/3')
+        .send('name=change')
+        .expect(404)
+        .end((error, res) => {
+          if (error) return done(error)
+          Tag.findByPk(3, { raw: true, attributes: ['name'] })
+            .then(tags => {
+              tags.should.deep.equal({ name: 'B' })
+              done()
+            }).catch(error => done(error))
+        })
+    })
+
     after(async () => {
       truncateTables(User, Tag)
       this.authenticate.restore()
@@ -112,7 +127,7 @@ describe('# tag request', () => {
       this.getUser = sinon.stub(helpers, 'getUser').returns({ id: 1, name: 'user1', email: 'user1@example.com' })
 
       await User.create({ name: 'user2', email: 'user2@example.com', password: '12345678' })
-      await Tag.bulkCreate([{ UserId: 1, name: 'A' }, { UserId: 1, name: 'B' }, { UserId: 2, name: 'B' }])
+      await Tag.bulkCreate([{ id: 1, UserId: 1, name: 'A' }, { id: 2, UserId: 1, name: 'B' }, { id: 3, UserId: 2, name: 'B' }])
     })
 
     it(' - delete tag', (done) => {
@@ -121,9 +136,23 @@ describe('# tag request', () => {
         .expect(200)
         .end((error, res) => {
           if (error) return done(error)
-          Tag.findAll({ where: { name: 'A', UserId: 1 }, raw: true })
+          Tag.findByPk(1, { raw: true })
             .then(tag => {
-              tag.should.have.lengthOf(0)
+              should.not.exist(tag)
+              done()
+            }).catch(error => done(error))
+        })
+    })
+
+    it(' - can\'t delete other\'s tag', (done) => {
+      request(app)
+        .delete('/api/tags/3')
+        .expect(404)
+        .end((error, res) => {
+          if (error) return done(error)
+          Tag.findByPk(3, { raw: true })
+            .then(tag => {
+              should.exist(tag)
               done()
             }).catch(error => done(error))
         })
