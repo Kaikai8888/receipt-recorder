@@ -72,7 +72,7 @@ redis-server redis.windows.conf
       "dev": "export NODE_ENV=development && npx sequelize-cli db:migrate && nodemon app.js",
       "reset": "npx sequelize-cli db:migrate:undo:all && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
       "clear-temp": "rm ./temp/*",
-      "test": "export NODE_ENV=test && npx sequelize-cli db:migrate && mocha test/*.js --exit --recursive --timeout 5000"
+      "test": "export NODE_ENV=test && npx sequelize-cli db:migrate && npx nyc mocha test/*.js --exit --recursive --timeout 5000"
     },
   }
 ```
