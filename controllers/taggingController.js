@@ -25,7 +25,7 @@ module.exports = {
       const { TagId, ReceiptId } = req.body
       const tagging = await Tagging.findOne({ where: { TagId, ReceiptId }, include: Receipt })
       if (!tagging || tagging.dataValues.Receipt.UserId !== UserId) throw new Error('notFound')
-      tagging.destroy()
+      await tagging.destroy()
       return res.json({ status: 'success', message: successMsgs.general })
     } catch (error) {
       next(error)

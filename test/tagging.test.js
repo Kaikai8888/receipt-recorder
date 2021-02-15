@@ -143,7 +143,7 @@ describe('# tagging request', () => {
         payment: 'CASH',
         date: new Date()
       })))
-      await Tagging.bulkCreate([{ ReceiptId: 1, TagId: 1 }, { ReceiptId: 2, TagId: 2 }])
+      await Tagging.bulkCreate([{ id: 1, ReceiptId: 1, TagId: 1 }, { id: 2, ReceiptId: 2, TagId: 2 }])
     })
 
     it(' - untag', (done) => {
@@ -155,7 +155,7 @@ describe('# tagging request', () => {
           if (error) return done(error)
           res.body.should.be.an('object')
           res.body.message.should.equal(msgs.success.general)
-          checkTagging(done)
+          checkTagging(done, 0)
         })
     })
 
