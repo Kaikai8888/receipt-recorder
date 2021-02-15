@@ -1,9 +1,8 @@
 const { Receipt, Store, Product, Purchase, Tag } = require('../models')
 const fs = require('fs')
-const paymentTypes = require('../docs/payment_types.json')
 const { success: successMsgs } = require('../docs/messages.json')
 const { upsertOnFields } = require('../modules/models.js')
-const { parseDate, parseProducts, parseTender, formatReceipt, getAfterColon } = require('../modules/receipts.js')
+const { formatReceipt, parse } = require('../modules/receipts.js')
 const helpers = require('../modules/_helpers')
 const excludedCols = ['createdAt', 'updatedAt', 'StoreId', 'UserId']
 
@@ -20,29 +19,16 @@ module.exports = {
         const receipt = { UserId }
 
         // check if receipt already exists
-        receipt.receiptNo = parseInt(getAfterColon(lines[5]))
-        if (!receipt.receiptNo) throw new Error('format')
+        receipt.receiptNo = parse.receiptNo(lines[5])
         const exist = await Receipt.findOne({ where: receipt })
         if (exist) return res.json({ status: 'success', message: successMsgs.already })
 
-        //parse store data
-        const store = {
-          name: lines[0].trim(),
-          tel: getAfterColon(lines[1]),
-          gstReg: getAfterColon(lines[2])
-        }
-
-        //parse receipt date
-        receipt.date = parseDate(lines[4])
-
-        //parse products and purchases data
-        let { i, products, purchases } = parseProducts(lines, 7)
-
-        //parse receipt: payment
-        receipt.payment = lines[i + 1].split(/\s+/)[0]
-        if (!paymentTypes.includes(receipt.payment)) throw new Error('payment')
-        //parse receipt: tender, change
-        parseTender(lines[i + 2], receipt)
+        //parse data
+        const store = parse.store(lines, 0)
+        receipt.date = parse.date(lines[4])
+        let { i, products, purchases } = parse.products(lines, 7)
+        receipt.payment = parse.payment(lines[i + 1])
+        parse.tender(lines[i + 2], receipt)
 
         //save to database
         const [{ id: StoreId }, _] = await upsertOnFields(Store, ['gstReg'], store)
