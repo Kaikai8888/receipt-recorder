@@ -9,9 +9,8 @@ const allModel = [User, Receipt, Product, Purchase, Store, Tag, Tagging]
 const passport = require('../config/passport.js')
 const helpers = require('../modules/_helpers.js')
 const msgs = require('../docs/messages.json')
-const truncateTables = async (...models) => {
-  await Promise.all(models.map(model => model.destroy({ where: {}, truncate: true })))
-}
+const { truncateTables } = require('../modules/models.js')
+
 
 describe('# receipt request', () => {
   describe('# POST /receipts ', () => {

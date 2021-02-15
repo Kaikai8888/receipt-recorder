@@ -18,5 +18,8 @@ module.exports = {
     } catch (error) {
       reject(error)
     }
-  })
+  }),
+  truncateTables: async (...models) => {
+    await Promise.all(models.map(model => model.destroy({ where: {}, truncate: true })))
+  }
 }
