@@ -99,11 +99,11 @@ npm run test
 
 File                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 ----------------------|---------|----------|---------|---------|-------------------
-All files             |   78.95 |    73.53 |      75 |   80.15 | 
+All files             |   90.79 |    88.24 |   93.75 |   91.91 | 
  receiptController.js |   98.21 |    91.67 |     100 |     100 | 17
  tagController.js     |   76.19 |    66.67 |      80 |   76.92 | 12-23,33
  taggingController.js |     100 |      100 |     100 |     100 | 
- userController.js    |   22.22 |        0 |       0 |      25 | 10-37
+ userController.js    |   88.89 |    83.33 |     100 |   91.67 | 24,35
 
 
 ### Test with:
