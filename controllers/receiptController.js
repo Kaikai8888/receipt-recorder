@@ -63,7 +63,6 @@ module.exports = {
         ],
         attributes: { exclude: excludedCols }
       }
-
       if (!TagId) {
         receipts = await Receipt.findAll({
           where: { UserId },

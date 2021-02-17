@@ -119,7 +119,7 @@ describe('# tagging request', () => {
     })
 
     after(async () => {
-      truncateTables(User, Receipt, Tag, Tagging)
+      truncateTables(User, Receipt, Tag, Tagging, Store)
       this.authenticate.restore()
       this.getUser.restore()
     })
@@ -186,7 +186,7 @@ describe('# tagging request', () => {
     })
 
     after(async () => {
-      truncateTables(User, Receipt, Tag, Tagging)
+      truncateTables(User, Receipt, Tag, Tagging, Store)
       this.authenticate.restore()
       this.getUser.restore()
     })
